@@ -18,7 +18,7 @@ DB_NAME = os.getenv("DB_NAME")
 
 # Base64-encoded CA cert
 DB_CA_CERT = os.getenv("DB_CA_CERT")  # path to isrgrootx1.pem
-DB_CA_PATH = "/temp/ca.pem"
+DB_CA_PATH = "/tmp/ca.pem"
 # decode base64 → pem file (ทำครั้งเดียวตอน start app)
 if DB_CA_CERT:
     try:

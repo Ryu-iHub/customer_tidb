@@ -1,4 +1,5 @@
 import os
+import base64
 from flask import Flask, request, jsonify, render_template
 import pymysql
 from pymysql.cursors import DictCursor

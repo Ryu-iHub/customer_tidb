@@ -24,6 +24,7 @@ if DB_CA_CERT:
     try:
         with open(DB_CA_PATH, "wb") as f:
             f.write(base64.b64decode(DB_CA_CERT))
+        print(f"✅ CA certificate written to {DB_CA_PATH}")            
     except Exception as e:
         print("❌ Error decoding CA cert:", e)
 
@@ -35,18 +36,32 @@ def get_connection():
     # pymysql supports ssl parameter as a dict; provide path to CA file
     
     # ssl_args = {"ca": DB_CA} if DB_CA else None
-    ssl_args = {"ca": DB_CA_PATH} if os.path.exists(DB_CA_PATH) else None
+    if not os.path.exists(DB_CA_PATH):
+        raise Exception(f"CA certificate not found at {DB_CA_PATH}")
+    
+    ssl_args = {
+        "ca": DB_CA_PATH,
+        "check_hostname":True
+    } 
 
-    return pymysql.connect(
-        host=DB_HOST,
-        port=DB_PORT,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        database=DB_NAME,
-        cursorclass=DictCursor,
-        ssl=ssl_args,
-        connect_timeout=10
-    )
+
+    app.logger.info(f"Connecting to DB_HOST={DB_HOST}, DB_NAME={DB_NAME}, DB_USER={DB_USER}")
+    try:
+        conn = pymysql.connect(
+            host=DB_HOST,
+            port=DB_PORT,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            database=DB_NAME,
+            cursorclass=DictCursor,
+            ssl=ssl_args,
+            connect_timeout=10
+        )
+        app.logger.info("✅ Connected to database successfully")
+        return conn
+    except Exception as e:
+        app.logger.exception("❌ Failed to connect to database")
+        raise
 
 @app.route("/")
 def index():
@@ -61,6 +76,7 @@ def health():
         conn.close()
         return jsonify({"status": "ok"})
     except Exception as e:
+        app.logger.exception("Health check failed")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 # CREATE
@@ -116,6 +132,9 @@ def get_customer(cid):
         if not row:
             return jsonify({"error": "not found"}), 404
         return jsonify(row)
+    except Exception as e:
+        app.logger.exception(f"Error fetching customer id={cid}")
+        return jsonify({"error": str(e)}), 500
     finally:
         conn.close()
 
@@ -137,6 +156,7 @@ def update_customer(cid):
         conn.commit()
         return jsonify({"message": "updated"})
     except Exception as e:
+        app.logger.exception(f"Error updating customer id={cid}")
         return jsonify({"error": str(e)}), 500
     finally:
         conn.close()
@@ -150,9 +170,15 @@ def delete_customer(cid):
             cur.execute("DELETE FROM customer_data WHERE id=%s", (cid,))
         conn.commit()
         return jsonify({"message": "deleted"})
+    except Exception as e:
+        app.logger.exception(f"Error deleting customer id={cid}")
+        return jsonify({"error": str(e)}), 500
     finally:
         conn.close()
 
+# -----------------------------
+# Run locally (for testing)
+# -----------------------------
 if __name__ == "__main__":
     # For development only; in production use gunicorn/uwsgi
     app.run(host="0.0.0.0", port=5000, debug=True)

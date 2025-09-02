@@ -34,7 +34,7 @@ def get_connection():
     # pymysql supports ssl parameter as a dict; provide path to CA file
     
     # ssl_args = {"ca": DB_CA} if DB_CA else None
-    ssl_args = {"ca": DB_CA_PATH} if DB_CA_PATH else None
+    ssl_args = {"ca": DB_CA_PATH} if os.path.exists(DB_CA_PATH) else None
 
     return pymysql.connect(
         host=DB_HOST,

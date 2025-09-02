@@ -99,6 +99,9 @@ def get_customers():
             cur.execute("SELECT * FROM customer_data ORDER BY id DESC")
             rows = cur.fetchall()
         return jsonify(rows)
+    except Exception as e:
+        app.logger.exception("Error in get_customers")
+        return jsonify({"error": str(e)}), 500    
     finally:
         conn.close()
 

@@ -14,12 +14,12 @@ DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_NAME = os.getenv("DB_NAME")
 
-# DB_CA = os.getenv("DB_CA_CERT")  # path to isrgrootx1.pem
+# DB_CA = os.getenv("DB_CA")  # path to isrgrootx1.pem
 
 # Base64-encoded CA cert
-DB_CA_CERT = os.getenv("DB_CA_CERT")  # path to isrgrootx1.pem
+DB_CA_CERT = os.getenv("DB_CA_CERT") #cabase64 text
 DB_CA_PATH = "/tmp/ca.pem"
-# decode base64 → pem file (ทำครั้งเดียวตอน start app)
+# # decode base64 → pem file (ทำครั้งเดียวตอน start app)
 if DB_CA_CERT:
     try:
         with open(DB_CA_PATH, "wb") as f:

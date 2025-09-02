@@ -1,0 +1,47 @@
+<!-- {% extends 'layout.html' %}
+
+{% block content %} -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer CRUD - TiDB Cloud</title>
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; }
+        input { margin: 5px; padding: 5px; }
+        button { margin: 5px; padding: 5px 10px; }
+        table { border-collapse: collapse; margin-top: 20px; width: 80%; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f4f4f4; }
+    </style>
+</head>
+<body>
+    <h1>Customer CRUD (TiDB Cloud) with pymysql library (CA File in Project and relative with .env file)</h1>
+
+    <form id="customerForm">
+        <input type="hidden" id="customerId">
+        <input type="text" id="name" placeholder="Name" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="text" id="phone" placeholder="Phone">
+        <button type="submit">Save</button>
+        <button type="button" id="resetBtn">Reset</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Created At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="customerList">
+        </tbody>
+    </table>
+</body>
+</html>
+  <!-- {% endblock %} -->
